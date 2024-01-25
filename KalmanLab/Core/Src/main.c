@@ -159,17 +159,32 @@ int main(void)
   					9.5799256668};
 
   float measurement[] = {0,1,2,3,4};
+  struct kalman_state SValue = {0.1,0.1,5,0.1,0};
+  int Length = sizeof(measurement)/sizeof(measurement[0]);
+  float OutputArray[Length];
 
 
-  struct KalmanFilter{
-	  float q;
-	  float r;
-	  float x;
-	  float p;
-	  float k;
-  };
+  // Assembly
+//  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
+//  	for (int i = 0; i<length; i++){
+//  		kalman(kstate,InputArray[i]);
+//  		OutputArray[i] = kstate->x;
+//  	}
+//  	return 0;
+//  }
 
-  struct KalmanFilter SValue = {0.1,0.1,5,0.1,0};
+  // C
+  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
+    	for (int i = 0; i<length; i++){
+
+    		kstate->p = kstate->p + kstate->q;
+    		kstate->k = kstate->p/(kstate->p + kstate->r);
+    		kstate->x = kstate->x + (kstate->k)*(InputArray[i]-kstate->x);
+    		kstate->p = (1-kstate->k)*kstate->p;
+    		OutputArray[i] = kstate->x;
+    	}
+    	return 0;
+    }
 
   /* USER CODE END 2 */
 
@@ -177,15 +192,17 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    int ArraySize = sizeof(TEST_ARRAY)/sizeof(TEST_ARRAY[0]);
-    int MeasurementSize = sizeof(measurement)/sizeof(measurement[0]);
-	for (int i = 0; i<MeasurementSize;i++){
-		kalman(&SValue, measurement[i]);
+//	int ArraySize = sizeof(TEST_ARRAY)/sizeof(TEST_ARRAY[0]);
+//    int MeasurementSize = sizeof(measurement)/sizeof(measurement[0]);
+//	for (int i = 0; i<MeasurementSize;i++){
+//		kalman(&SValue, measurement[i]);
+	KalmanFilter(&measurement,&OutputArray,&SValue, Length);
+
+
 	}/* USER CODE END WHILE */
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
-}
 
 /**
   * @brief System Clock Configuration

@@ -36,7 +36,13 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
+struct kalman_state{
+	  float q;
+	  float r;
+	  float x;
+	  float p;
+	  float k;
+  };
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

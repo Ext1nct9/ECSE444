@@ -19,6 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <stdio.h>
+#define ARM_MATH_CM4
+#include "arm_math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -174,18 +176,37 @@ int main(void)
 //  }
 
   // C
+//  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
+//    	for (int i = 0; i<length; i++){
+//
+//    		kstate->p = kstate->p + kstate->q;
+//    		kstate->k = kstate->p/(kstate->p + kstate->r);
+//    		kstate->x = kstate->x + (kstate->k)*(InputArray[i]-kstate->x);
+//    		kstate->p = (1-kstate->k)*kstate->p;
+//    		OutputArray[i] = kstate->x;
+//    	}
+//    	return 0;
+//    }
+
+  // CMSIS
   int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
-    	for (int i = 0; i<length; i++){
+      	for (int i = 0; i<length; i++){
 
-    		kstate->p = kstate->p + kstate->q;
-    		kstate->k = kstate->p/(kstate->p + kstate->r);
-    		kstate->x = kstate->x + (kstate->k)*(InputArray[i]-kstate->x);
-    		kstate->p = (1-kstate->k)*kstate->p;
-    		OutputArray[i] = kstate->x;
-    	}
-    	return 0;
-    }
-
+      		arm_add_f32(&kstate->p, &kstate->p,&kstate->q,1);
+      		float add = 0;
+      		arm_add_f32(&add,&kstate->p,&kstate->r,1);
+      		kstate->k = kstate->p/add;
+      		float mul = 0;
+      		float sub = 0;
+      		arm_sub_f32(&sub,&InputArray[i],&kstate->x,1);
+      		arm_mult_f32(&mul,&kstate->k,&sub,1);
+      		arm_add_f32(&kstate->x, &kstate->x, &mul,1);
+      		arm_sub_f32(&sub,1,&kstate->k,1);
+      		arm_mult_f32(&kstate->p,&sub,&kstate->p,1);
+      		OutputArray[i] = kstate->x;
+      	}
+      	return 0;
+      }
   /* USER CODE END 2 */
 
   /* Infinite loop */

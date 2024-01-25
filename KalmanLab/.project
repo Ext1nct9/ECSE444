@@ -29,16 +29,4 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>Core/Inc/arm_math - Copy.h</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Downloads/arm_math%20-%20Copy.h</locationURI>
-		</link>
-		<link>
-			<name>Core/Lib/libarm_cortexM4lf_math - Copy.a</name>
-			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/Downloads/libarm_cortexM4lf_math%20-%20Copy.a</locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>

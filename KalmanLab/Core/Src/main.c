@@ -21,6 +21,9 @@
 #include <stdio.h>
 #define ARM_MATH_CM4
 #include "arm_math.h"
+#include "KalmanFilter_C.h"
+#include "KalmanFilter_C_CMSIS.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -175,7 +178,7 @@ int main(void)
 //  	return 0;
 //  }
 
-  // C
+//  C
 //  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
 //    	for (int i = 0; i<length; i++){
 //
@@ -189,24 +192,25 @@ int main(void)
 //    }
 
   // CMSIS
-  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
-      	for (int i = 0; i<length; i++){
-
-      		arm_add_f32(&kstate->p, &kstate->p,&kstate->q,1);
-      		float add = 0;
-      		arm_add_f32(&add,&kstate->p,&kstate->r,1);
-      		kstate->k = kstate->p/add;
-      		float mul = 0;
-      		float sub = 0;
-      		arm_sub_f32(&sub,&InputArray[i],&kstate->x,1);
-      		arm_mult_f32(&mul,&kstate->k,&sub,1);
-      		arm_add_f32(&kstate->x, &kstate->x, &mul,1);
-      		arm_sub_f32(&sub,1,&kstate->k,1);
-      		arm_mult_f32(&kstate->p,&sub,&kstate->p,1);
-      		OutputArray[i] = kstate->x;
-      	}
-      	return 0;
-      }
+//  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
+//      	for (int i = 0; i<length; i++){
+//
+//      		arm_add_f32(&kstate->p, &kstate->q,&kstate->p,1);
+//      		float add = 0;
+//      		arm_add_f32(&kstate->p,&kstate->r,&add,1);
+//      		kstate->k = kstate->p/add;
+//      		float mul = 0;
+//      		float sub = 0;
+//      		float constant = 1;
+//      		arm_sub_f32(&InputArray[i],&kstate->x,&sub,1);
+//      		arm_mult_f32(&sub,&kstate->k,&mul,1);
+//      		arm_add_f32(&mul,&kstate->x,&kstate->x,1);
+//      		arm_sub_f32(&constant,&kstate->k,&sub,1);
+//      		arm_mult_f32(&kstate->p,&sub,&kstate->p,1);
+//      		OutputArray[i] = kstate->x;
+//      	}
+//      	return 0;
+//      }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -217,7 +221,7 @@ int main(void)
 //    int MeasurementSize = sizeof(measurement)/sizeof(measurement[0]);
 //	for (int i = 0; i<MeasurementSize;i++){
 //		kalman(&SValue, measurement[i]);
-	KalmanFilter(&measurement,&OutputArray,&SValue, Length);
+	KalmanFilterC(&measurement,&OutputArray,&SValue, Length);
 
 
 	}/* USER CODE END WHILE */

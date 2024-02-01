@@ -5,7 +5,7 @@
 
 // states order: q, r, x, p, k
 kalman:
-    VPUSH.32 {s4, s5, s6, s7}
+    VPUSH.32 {r4, s4, s5, s6, s7}
 
     // calculate p = p + q
     VLDR.32 s4, [r0, #12]     // load p in s4
@@ -16,6 +16,8 @@ kalman:
     // calculate k = p / (p + r)
     VLDR.32 s5, [r0, #4]     // load r in s5, new p already in s4
     VADD.F32 s5, s4, s5        // calculate p + r, result in s5
+    VCMP.F32 s5, #0.0		// check division by zero
+    BEQ division_by_zero
     VDIV.F32 s5, s4, s5        // calculate k = p / (p+r) , result in s5
     VSTR.32 s5, [r0, #16]    // save new k in struct
 
@@ -32,5 +34,21 @@ kalman:
     VMUL.F32 s4, s5, s4		// calculate new p, result in s4
     VSTR.32 s4, [r0, #12]    // save new p in struct
 
-    VPOP.32 {s4, s5, s6, s7}
+    VMRS r4, FPSCR
+    TST r4, #0x10000000	    // check for overflow
+    BEQ overflow
+    
+    MOV R0, #0     // no errors
+    B end_kalman
+
+// error handling
+// return 2 if overflow, return 1 if division by zero
+overflow:
+    MOV R0, #2
+    B end_kalman
+division_by_zero:
+    MOV R0, #1
+
+end_kalman:
+    VPOP.32 {r4, s4, s5, s6, s7}
     BX LR

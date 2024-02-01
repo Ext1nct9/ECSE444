@@ -1,12 +1,15 @@
 #include "main.h"
 
 // Substract data from original
-float calculateDiff(float* originalValue, float* calculatedValue){
-	return max(originalValue - calculatedValue,calculatedValue-originalValue);
+float calculateDiff(float originalArray[], float calculatedArray[], float differenceArray[]){
+	int len = sizeof(*calculatedArray/sizeof(calculatedArray[0]));
+	for(int i = 0; i<len; i++){
+		differenceArray[i] = originalArray[i] - calculatedArray[i];
+	}
 }
 // Average Calculation
-float calculateAvg(float* differenceArray[]){
-	int len = sizeof(differenceArray/sizeof(differenceArray[0]));
+float calculateAvg(float differenceArray[]){
+	int len = sizeof(*differenceArray/sizeof(differenceArray[0]));
 	float sum = 0;
 	for (int i = 0; i<len;i++){
 		sum += differenceArray[i];
@@ -14,8 +17,8 @@ float calculateAvg(float* differenceArray[]){
 	return sum/len;
 }
 // Standard Deviation calculation
-float calculateStDev(float* differenceArray[], float* mean){
-	int len = sizeof(differenceArray/sizeof(differenceArray[0]));
+float calculateStDev(float differenceArray[], float mean){
+	int len = sizeof(*differenceArray/sizeof(differenceArray[0]));
 	float sumSD = 0.0;
 	for(int i =0; i<len;i++){
 		sumSD += pow(differenceArray[i]-mean,2);
@@ -27,15 +30,15 @@ float calculateStDev(float* differenceArray[], float* mean){
 	return SD;
 }
 // Correlation between original and tracked vector
-float calculateCorrelation(float* originalArray[], float* calculatedArray[]){
+float calculateCorrelation(float originalArray[], float calculatedArray[]){
 	float mean, mean2,sum1,sum2,sumProduct = 0.0;
-	int lenc = sizeof(calculatedArray/sizeof(calculatedArray[0]));
+	int lenc = sizeof(*calculatedArray/sizeof(calculatedArray[0]));
 	for (int i =0; i<lenc;i++){
 		mean += originalArray[i];
 		mean2 += calculatedArray[i];
 		sum1 += pow(originalArray[i], 2);
 		sum2 += pow(calculatedArray[i],2);
-		sumProduct += originalArray[i]*calculateArray[i];
+		sumProduct += originalArray[i]*calculatedArray[i];
 	}
 
 	//mean /= lenc;
@@ -49,15 +52,15 @@ float calculateCorrelation(float* originalArray[], float* calculatedArray[]){
 	return correlation;
 }
 // Convolution Between two vectors
-void calculateConvolution(float* originalArray[], float* calculatedArray[], float* resultArray[]){
-	int len = sizeof(calculatedArray/sizeof(calculatedArray[0]));
+void calculateConvolution(float originalArray[], float calculatedArray[], float resultArray[]){
+	int len = sizeof(*calculatedArray/sizeof(calculatedArray[0]));
 	for(int i = 0; i<2*len-1;i++){
-		result[i] = 0.0;
+		resultArray[i] = 0.0;
 	}
 	for(int i = 0; i<2*len-1;i++){
 		for(int j = 0; j<len;j++){
 			if (i-j >= 0 && i-j <len){
-				result[i] += originalArray[j]*calculatedArray[i-j];
+				resultArray[i] += originalArray[j]*calculatedArray[i-j];
 			}
 		}
 	}

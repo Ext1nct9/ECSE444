@@ -170,13 +170,13 @@ int main(void)
 
 
   // Assembly
-//  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
-//  	for (int i = 0; i<length; i++){
-//  		kalman(kstate,InputArray[i]);
-//  		OutputArray[i] = kstate->x;
-//  	}
-//  	return 0;
-//  }
+  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
+  	for (int i = 0; i<length; i++){
+  		kalman(kstate,InputArray[i]);
+  		OutputArray[i] = kstate->x;
+  	}
+  	return 0;
+  }
 
 //  C
 //  int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
@@ -221,7 +221,7 @@ int main(void)
 //    int MeasurementSize = sizeof(measurement)/sizeof(measurement[0]);
 //	for (int i = 0; i<MeasurementSize;i++){
 //		kalman(&SValue, measurement[i]);
-	KalmanFilterC(&measurement,&OutputArray,&SValue, Length);
+	KalmanFilter(&measurement,&OutputArray,&SValue, Length);
 
 
 	}/* USER CODE END WHILE */

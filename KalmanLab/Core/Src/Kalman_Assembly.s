@@ -23,7 +23,7 @@ kalman:
     // calculate x = x + k * (meas - x)
     VLDR.32 s6, [r0, #8]    // load x in s6
     VSUB.F32 s7, s0, s6		// calculate meas - x, result in s7
-    VMLA.32 s6, s5, s7		// calculate x, result in s6
+    VMLA.F32 s6, s5, s7		// calculate x, result in s6
     VSTR.32 s6, [r0, #8]	// save new x in struct
 
     // calculate p = (1 - k) * p

@@ -1,0 +1,5 @@
+../Core/Src/Analysis.c:4:7:calculateDiff	32	static
+../Core/Src/Analysis.c:10:7:calculateAvg	24	static
+../Core/Src/Analysis.c:18:7:calculateStDev	48	static
+../Core/Src/Analysis.c:30:7:calculateCorrelation	80	static
+../Core/Src/Analysis.c:51:6:calculateConvolution	40	static

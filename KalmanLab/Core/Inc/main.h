@@ -57,7 +57,7 @@ struct kalman_state{
 
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
-extern void kalman(float* self,float measurement);
+extern void kalman(float* self, float* status, float measurement);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

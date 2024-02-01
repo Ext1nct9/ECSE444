@@ -23,6 +23,7 @@
 #include "arm_math.h"
 #include "KalmanFilter_C.h"
 #include "KalmanFilter_C_CMSIS.h"
+#include "Analysis.h"
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -37,7 +38,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define ITM_Port32(n) (*(volatile unsigned long*) (0xE0000000+4*n))
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -166,16 +167,24 @@ int main(void)
   float measurement[] = {0,1,2,3,4};
   struct kalman_state SValue = {0.1,0.1,5,0.1,0};
   int Length = sizeof(measurement)/sizeof(measurement[0]);
-  float OutputArray[Length];
+  float outputArray[Length];
+  float differenceArray[Length];
+  float avg = 0.0;
+  float SD = 0.0;
+  float correlation = 0.0;
+  float convolutionArray[2*Length-1];
+  uint32_t a = __get_FPSCR();
+  int status = 0;
+
 
 
   // Assembly
   int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
-  	for (int i = 0; i<length; i++){
-  		kalman(kstate,InputArray[i]);
+	for (int i = 0; i<length; i++){
+  		kalman(kstate, &status, InputArray[i]);
   		OutputArray[i] = kstate->x;
   	}
-  	return 0;
+  	return status;
   }
 
 //  C
@@ -221,7 +230,21 @@ int main(void)
 //    int MeasurementSize = sizeof(measurement)/sizeof(measurement[0]);
 //	for (int i = 0; i<MeasurementSize;i++){
 //		kalman(&SValue, measurement[i]);
-	KalmanFilter(&measurement,&OutputArray,&SValue, Length);
+	ITM_Port32(31) = 1;
+	KalmanFilter(&measurement,&outputArray,&SValue, Length);
+	a = __get_FPSCR();
+	if (a != 16){
+		while (1){
+			printf("Fuck me.");
+		}
+	}
+	ITM_Port32(31) = 2;
+
+	calculateDiff(&measurement,&outputArray,&differenceArray, Length);
+	avg = calculateAvg(&differenceArray, Length);
+	SD = calculateStDev(&differenceArray, avg, Length);
+	correlation = calculateCorrelation(&measurement,&outputArray, Length);
+	calculateConvolution(&measurement, &outputArray, &convolutionArray,Length);
 
 
 	}/* USER CODE END WHILE */

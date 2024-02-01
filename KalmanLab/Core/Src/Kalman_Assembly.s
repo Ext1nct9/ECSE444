@@ -35,23 +35,23 @@ kalman:
     VMUL.F32 s4, s5, s4		// calculate new p, result in s4
     VSTR.32 s4, [r0, #12]    // save new p in struct
 
-    PUSH {r4}
     VMRS r4, FPSCR
     TST r4, #0x10000000	    // check for overflow
     BEQ overflow
     
-    MOV R0, #0     // no errors
+    MOV r4, #0     // no errors
     B end_kalman
 
 // error handling
 // return 2 if overflow, return 1 if division by zero
 overflow:
-    MOV R0, #2
+    MOV r4, #2
     B end_kalman
 division_by_zero:
-    MOV R0, #1
+    MOV r4, #1
 
 end_kalman:
+    STR r4, [r1]
     POP {r4}
     VPOP.32 {s4, s5, s6, s7}
     BX LR

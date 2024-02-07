@@ -166,7 +166,7 @@ int main(void)
 
   float measurement[] = {0,1,2,3,4};
   struct kalman_state SValue = {0.1,0.1,5,0.1,0};
-  int Length = sizeof(measurement)/sizeof(measurement[0]);
+  int Length = sizeof(TEST_ARRAY)/sizeof(TEST_ARRAY[0]);
   float outputArray[Length];
   float differenceArray[Length];
   float avg = 0.0;
@@ -231,20 +231,21 @@ int main(void)
 //	for (int i = 0; i<MeasurementSize;i++){
 //		kalman(&SValue, measurement[i]);
 	ITM_Port32(31) = 1;
-	KalmanFilter(&measurement,&outputArray,&SValue, Length);
+	KalmanFilter(&TEST_ARRAY,&outputArray,&SValue, Length);
+	ITM_Port32(31) = 2;
 	a = __get_FPSCR();
-	if (a != 16){
+	if (a & 268435456 != 0){
 		while (1){
 			printf("Fuck me.");
 		}
 	}
-	ITM_Port32(31) = 2;
 
-	calculateDiff(&measurement,&outputArray,&differenceArray, Length);
+
+	calculateDiff(&TEST_ARRAY,&outputArray,&differenceArray, Length);
 	avg = calculateAvg(&differenceArray, Length);
 	SD = calculateStDev(&differenceArray, avg, Length);
-	correlation = calculateCorrelation(&measurement,&outputArray, Length);
-	calculateConvolution(&measurement, &outputArray, &convolutionArray,Length);
+	correlation = calculateCorrelation(&TEST_ARRAY,&outputArray, Length);
+	calculateConvolution(&TEST_ARRAY, &outputArray, &convolutionArray,Length);
 
 
 	}/* USER CODE END WHILE */

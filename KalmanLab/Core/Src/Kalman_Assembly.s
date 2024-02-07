@@ -17,7 +17,8 @@ kalman:
     // calculate k = p / (p + r)
     VLDR.32 s5, [r0, #4]     // load r in s5, new p already in s4
     VADD.F32 s5, s4, s5        // calculate p + r, result in s5
-    VCMP.F32 s5, s8	// check division by zero
+    VCMP.F32 s5, #0.0	// check division by zero
+    VMRS APSR_nzcv, FPSCR
     BEQ division_by_zero
     VDIV.F32 s5, s4, s5        // calculate k = p / (p+r) , result in s5
     VSTR.32 s5, [r0, #16]    // save new k in struct
@@ -36,8 +37,8 @@ kalman:
     VSTR.32 s4, [r0, #12]    // save new p in struct
 
     VMRS r4, FPSCR
-    TST r4, #0x10000000	    // check for overflow
-    BEQ overflow
+    TST r4 , #0x10000000	    // check for overflow
+    BNE overflow
 
     MOV r4, #0     // no errors
     B end_kalman

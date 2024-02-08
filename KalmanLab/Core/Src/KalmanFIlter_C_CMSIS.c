@@ -18,11 +18,12 @@
       		arm_sub_f32(&constant,&kstate->k,&sub,1);
       		arm_mult_f32(&kstate->p,&sub,&kstate->p,1);
       		OutputArray[i] = kstate->x;
-      	}
-      	int a = __get_FPSCR();
-      	if (a & 268435456 != 0){
-      	    printf("Overflow.");
-      	    while (1){}
-      	}
+      		int a = __get_FPSCR();
+      		if (a & 268435456 != 0){
+      			printf("Overflow.");
+      			while (1){}
+      		}
       	return 0;
+      	}
+
       }

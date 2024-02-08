@@ -6,8 +6,12 @@
 // states order: q, r, x, p, k
 kalman:
     VPUSH.32 {s4, s5, s6, s7}
-    PUSH {r4}
+    PUSH {r4, r5}
 
+    //LDR r4, =0xE000ED88
+    //LDR r5, [r4]
+    //ORR r5,r5,#(0x3 << 20)
+	//0STR r5, [r4]
     // calculate p = p + q
     VLDR.32 s4, [r0, #12]     // load p in s4
     VLDR.32 s5, [r0]         // load q in S5
@@ -53,6 +57,6 @@ division_by_zero:
 
 end_kalman:
     STR r4, [r1]
-    POP {r4}
+    POP {r4, r5}
     VPOP.32 {s4, s5, s6, s7}
     BX LR

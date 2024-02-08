@@ -165,13 +165,13 @@ int main(void)
   					9.5799256668};
 
   float measurement[] = {0,1,2,3,4};
-  struct kalman_state SValue = {0.1,0.1,5,0.1,0};
+  struct kalman_state SValue = {0.1,0.1,10,0.1,0};
   int Length = sizeof(TEST_ARRAY)/sizeof(TEST_ARRAY[0]);
   float outputArray[Length];
   float differenceArray[Length];
   float avg = 0.0;
   float SD = 0.0;
-  float correlation = 0.0;
+  float correlationArray[2*Length-1];
   float convolutionArray[2*Length-1];
   uint32_t a = __get_FPSCR();
   int status = 0;
@@ -236,15 +236,18 @@ int main(void)
 	a = __get_FPSCR();
 	if (a & 268435456 != 0){
 		while (1){
-			printf("Fuck me.");
+			printf("Overflow detected.");
 		}
 	}
+	// Can monitor value without stopping the program using SWV
+	// Cannot change values without stopping the program.
+	// CMSIS has generic implementation.
 
 
 	calculateDiff(&TEST_ARRAY,&outputArray,&differenceArray, Length);
 	avg = calculateAvg(&differenceArray, Length);
 	SD = calculateStDev(&differenceArray, avg, Length);
-	correlation = calculateCorrelation(&TEST_ARRAY,&outputArray, Length);
+	calculateCorrelation(&TEST_ARRAY, &outputArray, &correlationArray,Length);
 	calculateConvolution(&TEST_ARRAY, &outputArray, &convolutionArray,Length);
 
 

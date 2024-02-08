@@ -27,29 +27,10 @@ float calculateStDev(float differenceArray[], float mean, float length){
 	return SD;
 }
 // Correlation between original and tracked vector
-float calculateCorrelation(float originalArray[], float calculatedArray[], float length){
-	float mean = 0.0;
-    float mean2 = 0.0;
-    float sum1 = 0.0;
-    float sum2 = 0.0;
-    float sumProduct = 0.0;
-	for (int i =0; i<length;i++){
-		mean += originalArray[i];
-		mean2 += calculatedArray[i];
-		sum1 += pow(originalArray[i], 2);
-		sum2 += pow(calculatedArray[i],2);
-		sumProduct += originalArray[i]*calculatedArray[i];
+void calculateCorrelation(float originalArray[], float calculatedArray[], float correlationArray[], int length){
+	for (int i = 0;i<2*length-1;i++){
+		correlationArray[i] = originalArray[i]*calculatedArray[length-i];
 	}
-
-	//mean /= lenc;
-	//mean2 /= lenc;
-
-	float numerator = length*sumProduct - mean*mean2;
-	float denominator = sqrt((length*sum1-pow(mean,2))*(length*sum2-pow(mean2,2)));
-
-	float correlation = numerator/denominator;
-
-	return correlation;
 }
 // Convolution Between two vectors
 void calculateConvolution(float originalArray[], float calculatedArray[], float resultArray[], float length){

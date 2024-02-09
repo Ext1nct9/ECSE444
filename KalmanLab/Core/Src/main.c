@@ -24,6 +24,7 @@
 #include "KalmanFilter_C.h"
 #include "KalmanFilter_C_CMSIS.h"
 #include "Analysis.h"
+#include "AnalysisCMSIS.h"
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -106,7 +107,8 @@ int main(void)
   /* MCU Configuration--------------------------------------------------------*/
 
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+
+	HAL_Init();
 
   /* USER CODE BEGIN Init */
 
@@ -231,12 +233,14 @@ int main(void)
 //	for (int i = 0; i<MeasurementSize;i++){
 //		kalman(&SValue, measurement[i]);
 	ITM_Port32(31) = 1;
-	KalmanFilter(&TEST_ARRAY,&outputArray,&SValue, Length);
+	KalmanFilterCMSIS(&TEST_ARRAY,outputArray,&SValue, Length);
 	ITM_Port32(31) = 2;
 	a = __get_FPSCR();
 	if (a & 268435456 != 0){
 		while (1){
 			printf("Overflow detected.");
+
+
 		}
 	}
 	// Can monitor value without stopping the program using SWV
@@ -244,11 +248,17 @@ int main(void)
 	// CMSIS has generic implementation.
 
 
-	calculateDiff(&TEST_ARRAY,&outputArray,&differenceArray, Length);
-	avg = calculateAvg(&differenceArray, Length);
-	SD = calculateStDev(&differenceArray, avg, Length);
-	calculateCorrelation(&TEST_ARRAY, &outputArray, &correlationArray,Length);
-	calculateConvolution(&TEST_ARRAY, &outputArray, &convolutionArray,Length);
+	calculateDiff(&TEST_ARRAY,outputArray, differenceArray, Length);
+	avg = calculateAvg(differenceArray, Length);
+	SD = calculateStDev(differenceArray, avg, Length);
+	calculateCorrelation(&TEST_ARRAY, outputArray, correlationArray,Length);
+	calculateConvolution(&TEST_ARRAY, outputArray, convolutionArray,Length);
+
+	calculateDiffCMSIS(TEST_ARRAY,outputArray,differenceArray, Length);
+	avg = calculateAvgCMSIS(differenceArray, Length);
+	SD = calculateStDevCMSIS(differenceArray, Length);
+	calculateCorrelationCMSIS(TEST_ARRAY, outputArray, correlationArray,Length);
+	calculateConvolutionCMSIS(TEST_ARRAY, outputArray, convolutionArray,Length);
 
 
 	}/* USER CODE END WHILE */

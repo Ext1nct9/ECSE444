@@ -1,0 +1,5 @@
+../Core/Src/AnalysisCMSIS.c:4:6:calculateDiffCMSIS	24	static
+../Core/Src/AnalysisCMSIS.c:9:7:calculateAvgCMSIS	24	static
+../Core/Src/AnalysisCMSIS.c:15:7:calculateStDevCMSIS	24	static
+../Core/Src/AnalysisCMSIS.c:22:6:calculateCorrelationCMSIS	32	static
+../Core/Src/AnalysisCMSIS.c:26:6:calculateConvolutionCMSIS	32	static

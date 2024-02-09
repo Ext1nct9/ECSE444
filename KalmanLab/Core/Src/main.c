@@ -167,13 +167,13 @@ int main(void)
   					9.5799256668};
 
   float measurement[] = {0,1,2,3,4};
-  struct kalman_state SValue = {0.1,0.1,10,0.1,0};
-  int Length = sizeof(TEST_ARRAY)/sizeof(TEST_ARRAY[0]);
-  float outputArray[Length];
+  struct kalman_state SValue = {0.1,0.1,10,0.1,0}; // kalman struct
+  int Length = sizeof(TEST_ARRAY)/sizeof(TEST_ARRAY[0]); // Length value
+  float outputArray[Length]; // Output value array
   float differenceArray[Length];
   float avg = 0.0;
   float SD = 0.0;
-  float correlationArray[2*Length-1];
+  float correlationArray[2*Length-1]; // 2*length-1 because each element of one array interacts with an element in the other array, resulting in 2*length-1 outputs.
   float convolutionArray[2*Length-1];
   uint32_t a = __get_FPSCR();
   int status = 0;
@@ -182,7 +182,7 @@ int main(void)
 
   // Assembly
   int KalmanFilter(float* InputArray, float* OutputArray, struct kalman_state * kstate, int length){
-	for (int i = 0; i<length; i++){
+	for (int i = 0; i<length; i++){ // Iterate and store in array
   		kalman(kstate, &status, InputArray[i]);
   		OutputArray[i] = kstate->x;
   	}
@@ -232,10 +232,10 @@ int main(void)
 //    int MeasurementSize = sizeof(measurement)/sizeof(measurement[0]);
 //	for (int i = 0; i<MeasurementSize;i++){
 //		kalman(&SValue, measurement[i]);
-	ITM_Port32(31) = 1;
+	ITM_Port32(31) = 1; // Running time check start
 	KalmanFilterCMSIS(&TEST_ARRAY,outputArray,&SValue, Length);
-	ITM_Port32(31) = 2;
-	a = __get_FPSCR();
+	ITM_Port32(31) = 2; // Running time check stop
+	a = __get_FPSCR(); // Check for overflow
 	if (a & 268435456 != 0){
 		while (1){
 			printf("Overflow detected.");
@@ -247,13 +247,13 @@ int main(void)
 	// Cannot change values without stopping the program.
 	// CMSIS has generic implementation.
 
-
+	// Stats in C
 	calculateDiff(&TEST_ARRAY,outputArray, differenceArray, Length);
 	avg = calculateAvg(differenceArray, Length);
 	SD = calculateStDev(differenceArray, avg, Length);
 	calculateCorrelation(&TEST_ARRAY, outputArray, correlationArray,Length);
 	calculateConvolution(&TEST_ARRAY, outputArray, convolutionArray,Length);
-
+	// Stats in CMSIS
 	calculateDiffCMSIS(TEST_ARRAY,outputArray,differenceArray, Length);
 	avg = calculateAvgCMSIS(differenceArray, Length);
 	SD = calculateStDevCMSIS(differenceArray, Length);

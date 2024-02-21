@@ -106,7 +106,7 @@ int main(void)
 	  status = HAL_GPIO_ReadPin(myButton_GPIO_Port, myButton_Pin);
 	  if (status == 0) {
 		  HAL_GPIO_WritePin(myLed_GPIO_Port, myLed_Pin, GPIO_PIN_SET);
-		  //readingType = (readingType + 1) % 2;
+		  readingType = (readingType + 1) % 2;
 
 		  if (readingType == 0) { // temp
 			  HAL_ADCEx_InjectedStart(&hadc1);

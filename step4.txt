@@ -96,6 +96,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   char status = 0;
   int readingType = 0; // 0 for temp, 1 for V
+  float ref_cacl = 3.3;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,14 +118,14 @@ int main(void)
 			  int tscal1 = *TS_CAL1;
 			  int tscal2 = *TS_CAL2;
 
-			  float temperature = (100.0 / ((*TS_CAL2 - *TS_CAL1))) * (adc_value * (3.4/3.0) - *TS_CAL1) + 30.0;
+			  float temperature = (100.0 / ((*TS_CAL2 - *TS_CAL1))) * (adc_value * (ref_cacl/3.0) - *TS_CAL1) + 30.0;
 			  HAL_Delay(1000);
 		  } else { // voltage
 			  HAL_ADCEx_InjectedStart(&hadc1);
 			  //HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 			  uint16_t adc_value = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_2);
 			  float vrefint_cal = *calibration_coe;
-			  float ref_cacl = 3.0 * (vrefint_cal / adc_value);
+			  ref_cacl = 3.0 * (vrefint_cal / adc_value);
 			  HAL_Delay(1000);
 		  }
 	  } else {

@@ -18,8 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+// Temperature calibration values
 #define TS_CAL1 ((uint16_t*)(uint32_t) 0x1FFF75A8)
 #define TS_CAL2 ((uint16_t*)(uint32_t) 0x1FFF75CA)
+
+// Voltage calibration value
 #define calibration_coe ((uint16_t*)(uint32_t) 0x1FFF75AA)
 
 /* Private includes ----------------------------------------------------------*/
@@ -91,11 +94,15 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ADC1_Init();
+
+  // Calibrate the ADC for accurate conversion
   HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED);
 
   /* USER CODE BEGIN 2 */
+  // Button status
   char status = 0;
   int readingType = 0; // 0 for temp, 1 for V
+  // Reference voltage
   float ref_cacl = 3.3;
 
   /* USER CODE END 2 */
@@ -105,26 +112,36 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
+ 	  // Read pin
 	  status = HAL_GPIO_ReadPin(myButton_GPIO_Port, myButton_Pin);
+	  // If button is pressed
 	  if (status == 0) {
+		  // Set LED
 		  HAL_GPIO_WritePin(myLed_GPIO_Port, myLed_Pin, GPIO_PIN_SET);
+		  // Alternate between readings
 		  readingType = (readingType + 1) % 2;
 
 		  if (readingType == 0) { // temp
+			  // Injected mode
 			  HAL_ADCEx_InjectedStart(&hadc1);
+			  // Give ADC time to start
 			  HAL_Delay(1000);
 			  //HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+			  // Rank 1 is for temperature channel
 			  uint16_t adc_value = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_1);
 			  int tscal1 = *TS_CAL1;
 			  int tscal2 = *TS_CAL2;
 
+			  // Calculate temperature
 			  float temperature = (100.0 / ((*TS_CAL2 - *TS_CAL1))) * (adc_value * (ref_cacl/3.0) - *TS_CAL1) + 30.0;
 			  HAL_Delay(1000);
 		  } else { // voltage
 			  HAL_ADCEx_InjectedStart(&hadc1);
 			  //HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+			  // Rank 2 is for voltage channel
 			  uint16_t adc_value = HAL_ADCEx_InjectedGetValue(&hadc1, ADC_INJECTED_RANK_2);
 			  float vrefint_cal = *calibration_coe;
+			  // Calculate updated voltage reference
 			  ref_cacl = 3.0 * (vrefint_cal / adc_value);
 			  HAL_Delay(1000);
 		  }

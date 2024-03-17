@@ -117,26 +117,26 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-  //uint16_t buf_size = 15;
-//  uint16_t dac_buffer_tri[buf_size];
-//  uint16_t dac_buffer_saw[buf_size];
-  //uint16_t dac_buffer_sin[buf_size];
+  uint16_t buf_size = 15;
+ uint16_t dac_buffer_tri[buf_size];
+ uint16_t dac_buffer_saw[buf_size];
+  uint16_t dac_buffer_sin[buf_size];
 
   uint16_t amplitude = DAC_RESOLUTION;
   uint16_t period = (uint16_t) SAMPLE_RATE / FREQUENCY;
 
-//  // triangle wave
-//  uint16_t half_length = period / 2;
-//  for (uint16_t i = 0; i < half_length; ++i) {
-//	  dac_buffer_tri[i] = (i * amplitude) / half_length; // go up
-//	  dac_buffer_tri[i + half_length] = amplitude - ((i * amplitude) / half_length); // go down
-//  }
-//  dac_buffer_tri[buf_size-1] = 0;
-//
-//  // sawtooth wave
-//  for (uint16_t i = 0; i < period; ++i) {
-//	  dac_buffer_saw[i] = (i * amplitude) / period;
-//  }
+ // triangle wave
+ uint16_t half_length = period / 2;
+ for (uint16_t i = 0; i < half_length; ++i) {
+	  dac_buffer_tri[i] = (i * amplitude) / half_length; // go up
+	  dac_buffer_tri[i + half_length] = amplitude - ((i * amplitude) / half_length); // go down
+ }
+ dac_buffer_tri[buf_size-1] = 0;
+
+ // sawtooth wave
+ for (uint16_t i = 0; i < period; ++i) {
+	  dac_buffer_saw[i] = (i * amplitude) / period;
+ }
 
   // sin wave
   for (uint16_t j = 0; j < period; j++) {
@@ -170,9 +170,9 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
   }
 
-//int i = 0;
-//  int triangle = 0; // variables for SWV trace
-//  int saw = 0;
+int i = 0;
+ int triangle = 0; // variables for SWV trace
+ int saw = 0;
 
   /* USER CODE END 2 */
 
@@ -184,18 +184,18 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
     // Update DAC values
-//      triangle = dac_buffer_tri[i];
-//      saw = dac_buffer_saw[i];
+     triangle = dac_buffer_tri[i];
+     saw = dac_buffer_saw[i];
 
-      //HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_buffer_sin[i]);
-//      HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_buffer_saw[i]);
+      HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_buffer_sin[i]);
+     HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_2, DAC_ALIGN_12B_R, dac_buffer_saw[i]);
 
-//      i++;
-//      if (i >= period) {
-//    	  i = 0;
-//      }
+     i++;
+     if (i >= period) {
+   	  i = 0;
+     }
 
-      //HAL_Delay(0.5);
+      HAL_Delay(0.5);
 
   }
   /* USER CODE END 3 */
@@ -410,18 +410,18 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-//{
-//	if (htim->Instance == TIM2) {
-//
-//		//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
-//		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_buffer_sin[buf_count]);
-//		buf_count++;
-//		if (buf_count >= (uint16_t) SAMPLE_RATE / FREQUENCY) {
-//			buf_count = 0;
-//		}
-//	}
-//}
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if (htim->Instance == TIM2) {
+
+		//HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+		HAL_DAC_SetValue(&hdac1, DAC_CHANNEL_1, DAC_ALIGN_12B_R, dac_buffer_sin[buf_count]);
+		buf_count++;
+		if (buf_count >= (uint16_t) SAMPLE_RATE / FREQUENCY) {
+			buf_count = 0;
+		}
+	}
+}
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	if (GPIO_Pin == myButton_Pin) {
